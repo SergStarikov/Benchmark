@@ -10,9 +10,9 @@ public class CpuCacheTest {
     @State(Scope.Benchmark)
     public static class ExecutionPlan {
         private static final int ARRAY_CONTENT = 777;
-        @Param({"1024", "2048", "12582912", "15123456"})
-        public int size;
-        public int[] array;
+        @Param({"512", "1024", "65535", "1258291", "90123456"})
+        int size;
+        int[] array;
 
         @Setup(Level.Iteration)
         public void setUp() {
