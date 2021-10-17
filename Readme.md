@@ -34,7 +34,7 @@ modifies only every 16th element.
 |CpuCacheTest.incrementSixteenthElement | 1258291|  thrpt|    5|     3,682| ±    0,249|  ops/ms|
 |CpuCacheTest.incrementSixteenthElement |90123456|  thrpt|    5|     0,027| ±    0,001|  ops/ms|
 
-#### Ratio operations per millisecond for processing each item to each sixteenth item
+#### Ratio operations per millisecond for processing each sixteenth item to each item
 
 |  (size)| incrementSixteenthElement score / incrementEachElement score|
 |--------| ------------------------------------------------------------|
@@ -85,3 +85,25 @@ the stream, and in the case of a parallelized stream, you still need to manage t
 
 With large collection sizes, the results are opposite: the parallel stream took the least time to complete the operation.
 The greatest is the loop.
+
+## False sharing (Cache line test)
+
+The experiment consists of two test runs in which you can run two of the methods concurrently on different threads.
+The first test run will execute the methods modifyFarA() and modifyFarB(), which modify two array elements that are 16
+elements apart. The second test run will execute the methods modifyNearA() and modifyNearB(), which modify two adjacent
+array elements.
+
+|Benchmark                      |(size)|  Mode|  Cnt|  Score|   Error|  Units|
+|-------------------------------|------|------|-----|-------|--------|-------|
+|FalseSharing.far               |    17|  avgt|    5|  3,925| ± 0,531|  ns/op|
+|FalseSharing.far:modifyFarA    |    17|  avgt|    5|  2,079| ± 0,105|  ns/op|
+|FalseSharing.far:modifyFarB    |    17|  avgt|    5|  5,772| ± 1,078|  ns/op|
+|FalseSharing.near              |    17|  avgt|    5|  3,804| ± 0,260|  ns/op|
+|FalseSharing.near:modifyNearA  |    17|  avgt|    5|  3,844| ± 0,235|  ns/op|
+|FalseSharing.near:modifyNearB  |    17|  avgt|    5|  3,764| ± 0,363|  ns/op|
+
+If elements of an integer array are 16 elements or more apart, they will be located in different cache lines. If they
+are closer to each other, chances become great that they will end up in the same cache line.
+When two threads run in parallel long enough, they end up on different CPU cores. CPU cores do not share an L1 cache—each
+core has its own. As each core copies the cache line into its respective L1 cache and executes the update to the variable,
+the core notifies the other cores of the update and tells them to refresh their L1 cache in case that L1 cache is out of sync.
