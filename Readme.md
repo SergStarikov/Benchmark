@@ -36,13 +36,13 @@ modifies only every 16th element.
 
 #### Ratio operations per millisecond for processing each sixteenth item to each item
 
-|  (size)| incrementSixteenthElement score / incrementEachElement score|
-|--------| ------------------------------------------------------------|
-|     512|                                                     13,27138|
-|    1024|                                                     8,703216| 
-|   65535|                                                     11,82979| 
-| 1258291|                                                     11,29448| 
-|90123456|                                                         6,75| 
+| (size)   | incrementSixteenthElement score / incrementEachElement score |
+|----------|--------------------------------------------------------------|
+| 512      | 13,27138                                                     |
+| 1024     | 8,703216                                                     | 
+| 65535    | 11,82979                                                     | 
+| 1258291  | 11,29448                                                     | 
+| 90123456 | 6,75                                                         | 
 
 As long as the array fits into the L1 and L2 caches, access time is very low. But as soon as the array becomes too large
 and has to be read from the L3 cache, access time increases noticeably. And the same happens again as soon as the array
